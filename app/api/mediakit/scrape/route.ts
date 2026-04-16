@@ -22,17 +22,23 @@ export async function POST(req: NextRequest) {
     // Gerar descrição com IA
     let aiDescription = "";
     try {
-      const prompt = `Você é um copywriter especializado em criadores de conteúdo brasileiros.
-Crie uma descrição profissional curta (2-3 frases) para o mídia kit do criador abaixo.
-Tom: confiante, direto, profissional. Em português brasileiro.
+      const prompt = `Você é um copywriter especializado em mídia kits de criadores de conteúdo brasileiros.
+Escreva uma descrição profissional para o mídia kit abaixo. Deve ter 3 a 4 frases.
+Tom: confiante, direto, valorizado — como um grande creator que sabe o que vale.
+Use linguagem que convença marcas e anunciantes a fechar parceria.
+Destaque autoridade, consistência e conexão com a audiência.
+Em português brasileiro. Sem bullet points. Sem títulos. Só o texto corrido.
 
 Nome: ${body.name}
 Nicho: ${body.niche || "conteúdo geral"}
 Cidade: ${body.city || "Brasil"}
 ${instagram ? `Instagram: @${instagram.username} com ${instagram.followers.toLocaleString("pt-BR")} seguidores` : ""}
 ${instagram ? `Taxa de engajamento: ${instagram.engagementRate}%` : ""}
+${instagram ? `Média de likes por post: ${instagram.avgLikes.toLocaleString("pt-BR")}` : ""}
+${instagram ? `Posts publicados: ${instagram.posts.toLocaleString("pt-BR")}` : ""}
+${body.niche === "Apostas" ? "Contexto: creator do nicho de apostas esportivas, referência no mercado brasileiro de tips e análises." : ""}
 
-Responda APENAS com a descrição, sem títulos ou explicações.`;
+Responda APENAS com a descrição, sem aspas, sem títulos, sem explicações.`;
 
       const message = await anthropic.messages.create({
         model: "claude-3-5-haiku-20241022",

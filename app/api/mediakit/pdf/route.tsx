@@ -11,7 +11,6 @@ import {
 import { formatNumber, formatPercent } from "@/lib/utils";
 import type { MediaKitData } from "@/types";
 
-// ─── fetch image → base64 data URI ──────────────────────────────────────────
 async function toBase64(url: string): Promise<string | null> {
   if (!url) return null;
   try {
@@ -29,377 +28,188 @@ async function toBase64(url: string): Promise<string | null> {
   }
 }
 
-// ─── design tokens ──────────────────────────────────────────────────────────
 const BG   = "#0d0d0d";
 const NEON = "#C8FF00";
 const CARD = "#161616";
 const WHITE = "#ffffff";
-const GRAY  = "#666666";
+const GRAY  = "#555555";
 const DIM   = "#2a2a2a";
 
-// ─── styles ─────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  page: {
-    backgroundColor: BG,
-    fontFamily: "Helvetica",
-    position: "relative",
-  },
+  page: { backgroundColor: BG, fontFamily: "Helvetica", position: "relative" },
+  pageNum: { position: "absolute", bottom: 20, right: 36, fontSize: 9, color: "#444" },
 
-  pageNum: {
+  // ── SLIDE 1 — COVER ──────────────────────────────────────────────────────────
+  coverPage: { backgroundColor: NEON, flex: 1, position: "relative" },
+  coverMidiaKit: {
     position: "absolute",
-    bottom: 20,
-    right: 40,
-    fontSize: 10,
-    color: GRAY,
-  },
-
-  mkLabel: {
-    position: "absolute",
-    top: 24,
-    left: 40,
-    fontSize: 9,
-    color: GRAY,
-    letterSpacing: 2,
-  },
-
-  // ── SLIDE 1 — cover (neon green + concentric circles) ────────────────────
-  coverPage: {
-    backgroundColor: NEON,
-    flex: 1,
-    position: "relative",
-  },
-
-  // label topo esquerdo
-  coverMkLabel: {
-    position: "absolute",
-    top: 26,
-    left: 40,
-    fontSize: 10,
-    color: "rgba(0,0,0,0.35)",
-    letterSpacing: 3,
-  },
-
-  // texto bottom-left
-  coverBottom: {
-    position: "absolute",
-    bottom: 44,
-    left: 48,
-  },
-  coverTitle: {
-    fontSize: 13,
-    color: "rgba(0,0,0,0.45)",
-    letterSpacing: 2,
-    marginBottom: 6,
-  },
-  coverName: {
+    left: 80,
+    top: 200,
     fontSize: 52,
     fontFamily: "Helvetica-Bold",
     color: "#0d0d0d",
-    lineHeight: 1.05,
+  },
+  coverName: {
+    position: "absolute",
+    left: 80,
+    bottom: 80,
+    fontSize: 32,
+    color: "#0d0d0d",
   },
   coverHandle: {
-    fontSize: 18,
-    color: "rgba(0,0,0,0.45)",
-    marginTop: 6,
-  },
-
-  // círculo preto central — vazio
-  coverBtn: {
     position: "absolute",
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#0d0d0d",
-    // centro dos círculos: top=280, left=620 → offset 32
-    top: 248,
-    left: 588,
+    left: 80,
+    bottom: 52,
+    fontSize: 14,
+    color: "rgba(0,0,0,0.4)",
   },
 
-  // label topo esquerdo (mantido pra compatibilidade)
-  coverContactLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 5 },
-  coverContactVal: { fontSize: 14, color: WHITE },
-
-  // ── SLIDE 2 — sobre ───────────────────────────────────────────────────────
+  // ── SLIDE 2 — IDENTIDADE ─────────────────────────────────────────────────────
   sobre: { flex: 1, flexDirection: "row" },
-
-  sobreLeft: {
-    width: 240,
-    backgroundColor: CARD,
-    padding: 28,
-    alignItems: "center",
-  },
-  sobreAvatar: {
-    width: 184,
-    height: 184,
-    borderRadius: 14,
-    marginBottom: 20,
-  },
-  sobreInfoRow: {
-    width: "100%",
-    borderTop: `1px solid ${DIM}`,
-    paddingVertical: 13,
-  },
-  sobreInfoLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 3 },
-  sobreInfoVal: { fontSize: 12, color: WHITE },
-  sobreInfoValNeon: { fontSize: 12, color: NEON },
-
-  sobreRight: { flex: 1, padding: 52, justifyContent: "center" },
-  sobreSection: { fontSize: 9, color: NEON, letterSpacing: 3, marginBottom: 10 },
-  sobreName: {
-    fontSize: 40,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    marginBottom: 12,
-  },
+  sobreLeft: { width: 230, backgroundColor: CARD, padding: 26, alignItems: "center" },
+  sobreAvatar: { width: 178, height: 178, borderRadius: 12, marginBottom: 18 },
+  sobreInfoRow: { width: "100%", borderTop: `1px solid ${DIM}`, paddingVertical: 12 },
+  sobreInfoLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 3 },
+  sobreInfoVal: { fontSize: 11, color: WHITE },
+  sobreInfoValNeon: { fontSize: 11, color: NEON },
+  sobreRight: { flex: 1, padding: 48, justifyContent: "center" },
+  sobreSection: { fontSize: 8, color: NEON, letterSpacing: 3, marginBottom: 10 },
+  sobreName: { fontSize: 38, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 10 },
   sobreBadge: {
-    alignSelf: "flex-start",
-    borderRadius: 20,
+    alignSelf: "flex-start", borderRadius: 20,
     border: `1px solid rgba(200,255,0,0.3)`,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    fontSize: 12,
-    color: NEON,
-    marginBottom: 20,
+    paddingHorizontal: 12, paddingVertical: 5,
+    fontSize: 11, color: NEON, marginBottom: 18,
   },
-  sobreBio: { fontSize: 13, color: GRAY, lineHeight: 1.65, marginBottom: 32 },
-  sobreMetrics: { flexDirection: "row", gap: 32 },
-  sobreMetricVal: {
-    fontSize: 30,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    marginBottom: 3,
-  },
-  sobreMetricValNeon: {
-    fontSize: 30,
-    fontFamily: "Helvetica-Bold",
-    color: NEON,
-    marginBottom: 3,
-  },
-  sobreMetricLabel: { fontSize: 9, color: GRAY, letterSpacing: 1 },
+  sobreBio: { fontSize: 13, color: "#aaaaaa", lineHeight: 1.7, marginBottom: 30 },
+  sobreMetrics: { flexDirection: "row", gap: 28 },
+  sobreMetricVal: { fontSize: 28, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 3 },
+  sobreMetricValNeon: { fontSize: 28, fontFamily: "Helvetica-Bold", color: NEON, marginBottom: 3 },
+  sobreMetricLabel: { fontSize: 8, color: GRAY, letterSpacing: 1 },
 
-  // ── SLIDE 3 — números ─────────────────────────────────────────────────────
-  numeros: { flex: 1, padding: 48 },
-  numerosTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 24,
-  },
-  numerosSection: { fontSize: 9, color: NEON, letterSpacing: 3, marginBottom: 6 },
-  numerosTitle: { fontSize: 34, fontFamily: "Helvetica-Bold", color: WHITE },
-  numerosCreator: { fontSize: 12, color: GRAY, paddingTop: 6 },
-
-  numerosCards: { flexDirection: "row", gap: 10, marginBottom: 12 },
+  // ── SLIDE 3 — NÚMEROS ────────────────────────────────────────────────────────
+  numeros: { flex: 1, padding: 44 },
+  numerosHeader: { marginBottom: 22 },
+  numerosSection: { fontSize: 8, color: NEON, letterSpacing: 3, marginBottom: 8 },
+  numerosTitle: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 10 },
+  numerosCopy: { fontSize: 12, color: "#888", lineHeight: 1.65, maxWidth: 560 },
+  numerosCards: { flexDirection: "row", gap: 10, marginBottom: 10, marginTop: 20 },
   numerosCard: {
-    flex: 1,
-    backgroundColor: CARD,
-    borderRadius: 12,
-    padding: 22,
+    flex: 1, backgroundColor: CARD, borderRadius: 10, padding: 20,
     border: `1px solid ${DIM}`,
   },
-  numerosCardLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 14 },
-  numerosCardNum: {
-    fontSize: 42,
-    fontFamily: "Helvetica-Bold",
-    color: NEON,
-    lineHeight: 1,
-    marginBottom: 6,
-  },
-  numerosCardNumWhite: {
-    fontSize: 42,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    lineHeight: 1,
-    marginBottom: 6,
-  },
-  numerosCardSub: { fontSize: 10, color: GRAY },
-
+  numerosCardLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 12 },
+  numerosCardNum: { fontSize: 36, fontFamily: "Helvetica-Bold", color: NEON, lineHeight: 1, marginBottom: 5 },
+  numerosCardNumWhite: { fontSize: 36, fontFamily: "Helvetica-Bold", color: WHITE, lineHeight: 1, marginBottom: 5 },
+  numerosCardSub: { fontSize: 9, color: GRAY },
   numerosBar: {
-    backgroundColor: CARD,
-    borderRadius: 10,
-    border: `1px solid ${DIM}`,
-    paddingHorizontal: 24,
-    paddingVertical: 18,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: CARD, borderRadius: 8, border: `1px solid ${DIM}`,
+    paddingHorizontal: 22, paddingVertical: 16,
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
   },
-  numerosBarTag: { fontSize: 9, color: NEON, letterSpacing: 2, marginBottom: 4 },
-  numerosBarName: {
-    fontSize: 18,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    marginBottom: 2,
-  },
-  numerosBarSub: { fontSize: 11, color: GRAY },
-  numerosBarEngLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 3 },
-  numerosBarEngVal: { fontSize: 28, fontFamily: "Helvetica-Bold", color: NEON },
+  numerosBarTag: { fontSize: 8, color: NEON, letterSpacing: 2, marginBottom: 4 },
+  numerosBarName: { fontSize: 16, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 2 },
+  numerosBarSub: { fontSize: 10, color: GRAY },
+  numerosBarEngLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 3 },
+  numerosBarEngVal: { fontSize: 26, fontFamily: "Helvetica-Bold", color: NEON },
 
-  // ── SLIDE 4 — CTA ─────────────────────────────────────────────────────────
+  // ── SLIDE 4 — POSTS ──────────────────────────────────────────────────────────
+  posts: { flex: 1, padding: 44 },
+  postsHeader: { marginBottom: 24 },
+  postsSection: { fontSize: 8, color: NEON, letterSpacing: 3, marginBottom: 8 },
+  postsTitle: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE },
+  postsGrid: { flexDirection: "row", gap: 12, flex: 1 },
+  postCard: { flex: 1, backgroundColor: CARD, borderRadius: 10, overflow: "hidden", border: `1px solid ${DIM}` },
+  postThumb: { width: "100%", height: 160 },
+  postFooter: { padding: 14 },
+  postStat: { flexDirection: "row", gap: 16 },
+  postStatLabel: { fontSize: 8, color: GRAY, letterSpacing: 1, marginBottom: 3 },
+  postStatVal: { fontSize: 16, fontFamily: "Helvetica-Bold", color: WHITE },
+  postStatValNeon: { fontSize: 16, fontFamily: "Helvetica-Bold", color: NEON },
+
+  // ── SLIDE 5 — CTA ────────────────────────────────────────────────────────────
   ctaPage: { flex: 1, flexDirection: "row" },
-
-  ctaLeft: { flex: 55, padding: 56, justifyContent: "center" },
-  ctaSection: { fontSize: 9, color: NEON, letterSpacing: 3, marginBottom: 16 },
-  ctaTitle: {
-    fontSize: 44,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    lineHeight: 1.15,
-    marginBottom: 14,
-  },
+  ctaLeft: { flex: 55, padding: 52, justifyContent: "center" },
+  ctaSection: { fontSize: 8, color: NEON, letterSpacing: 3, marginBottom: 16 },
+  ctaTitle: { fontSize: 40, fontFamily: "Helvetica-Bold", color: WHITE, lineHeight: 1.15, marginBottom: 12 },
   ctaTitleAccent: { color: NEON },
-  ctaDesc: { fontSize: 13, color: GRAY, lineHeight: 1.65, marginBottom: 30 },
+  ctaDesc: { fontSize: 13, color: GRAY, lineHeight: 1.65, marginBottom: 28 },
   ctaCard: {
-    backgroundColor: CARD,
-    borderRadius: 12,
-    border: `1px solid ${DIM}`,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
+    backgroundColor: CARD, borderRadius: 10, border: `1px solid ${DIM}`,
+    paddingHorizontal: 18, paddingVertical: 13,
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8,
   },
-  ctaCardLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 4 },
+  ctaCardLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 4 },
   ctaCardVal: { fontSize: 13, fontFamily: "Helvetica-Bold", color: WHITE },
   ctaCardRight: { fontSize: 13, fontFamily: "Helvetica-Bold", color: NEON },
-
   ctaRight: {
-    flex: 45,
-    borderLeft: `1px solid ${DIM}`,
-    padding: 52,
-    justifyContent: "center",
-    alignItems: "center",
+    flex: 45, borderLeft: `1px solid ${DIM}`,
+    padding: 48, justifyContent: "center", alignItems: "center",
   },
-  ctaAvatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    border: `3px solid ${NEON}`,
-    marginBottom: 18,
-  },
-  ctaReachLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 5 },
-  ctaReachNum: {
-    fontSize: 64,
-    fontFamily: "Helvetica-Bold",
-    color: NEON,
-    lineHeight: 1,
-    marginBottom: 4,
-  },
-  ctaReachSub: { fontSize: 12, color: GRAY, marginBottom: 18 },
-  ctaName: {
-    fontSize: 18,
-    fontFamily: "Helvetica-Bold",
-    color: WHITE,
-    marginBottom: 5,
-  },
-  ctaCity: { fontSize: 11, color: GRAY, marginBottom: 12 },
+  ctaAvatar: { width: 110, height: 110, borderRadius: 55, border: `3px solid ${NEON}`, marginBottom: 16 },
+  ctaReachLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 5 },
+  ctaReachNum: { fontSize: 58, fontFamily: "Helvetica-Bold", color: NEON, lineHeight: 1, marginBottom: 4 },
+  ctaReachSub: { fontSize: 11, color: GRAY, marginBottom: 16 },
+  ctaName: { fontSize: 17, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 5 },
+  ctaCity: { fontSize: 10, color: GRAY, marginBottom: 10 },
   ctaBadge: {
-    borderRadius: 20,
-    border: `1px solid rgba(200,255,0,0.3)`,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    fontSize: 11,
-    color: NEON,
+    borderRadius: 20, border: `1px solid rgba(200,255,0,0.3)`,
+    paddingHorizontal: 12, paddingVertical: 5, fontSize: 10, color: NEON,
   },
 });
 
-// ─── route handler ───────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
     const data: MediaKitData = await req.json();
     const ig = data.instagram;
 
-    // Fetch avatar as base64 so it renders in PDF
     const avatarSrc = ig?.profilePicUrl ? await toBase64(ig.profilePicUrl) : null;
 
-    const contact = data.contactEmail || data.email;
-    const totalSlides = 4;
-
-    // textura — grid de pontinhos pré-computado
-    const textureDots: { key: string; top: number; left: number }[] = [];
-    for (let row = 0; row < 18; row++) {
-      for (let col = 0; col < 28; col++) {
-        textureDots.push({ key: `${row}-${col}`, top: row * 33 + 12, left: col * 30 + 12 });
+    // Fetch post thumbnails as base64
+    const postImages: (string | null)[] = [];
+    if (ig?.topPosts) {
+      for (const post of ig.topPosts.slice(0, 3)) {
+        postImages.push(await toBase64(post.thumbnail));
       }
     }
 
-    // círculos com opacidade decrescente do centro pra fora
-    const circles = [
-      { size: 80,  opacity: 0.60 },
-      { size: 160, opacity: 0.45 },
-      { size: 260, opacity: 0.30 },
-      { size: 360, opacity: 0.18 },
-      { size: 460, opacity: 0.10 },
-      { size: 560, opacity: 0.05 },
-    ];
-    const CX = 620; // centro X dos círculos
-    const CY = 280; // centro Y dos círculos
+    const contact = data.contactEmail || data.email;
+    const hasPosts = ig && ig.topPosts.length > 0;
+    const totalSlides = hasPosts ? 5 : 4;
 
     const pdfBuffer = await renderToBuffer(
       <Document title={`Mídia Kit — ${data.name}`} author="Arena Click">
 
-        {/* ── SLIDE 1 — COVER ─────────────────────────────────────────────── */}
+        {/* ── SLIDE 1 — COVER ─────────────────────────────────────────── */}
         <Page size="A4" orientation="landscape" style={[s.page, s.coverPage]}>
-
-          {/* degradê sutil — overlay escuro na borda inferior */}
+          {/* arcos concêntricos no canto inferior direito */}
           <View style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: 320,
-            backgroundColor: "#88aa00", opacity: 0.18,
+            position: "absolute", width: 340, height: 340, borderRadius: 170,
+            backgroundColor: "#0d0d0d", bottom: -120, right: -120,
           }} />
-          {/* degradê sutil — canto superior direito um pouco mais claro */}
           <View style={{
-            position: "absolute", top: 0, right: 0, width: 400, height: 280,
-            backgroundColor: "#ffffff", opacity: 0.06,
+            position: "absolute", width: 210, height: 210, borderRadius: 105,
+            backgroundColor: NEON, bottom: -70, right: -70,
+          }} />
+          <View style={{
+            position: "absolute", width: 100, height: 100, borderRadius: 50,
+            backgroundColor: "#0d0d0d", bottom: -20, right: -20,
           }} />
 
-          {/* textura — grid de pontinhos */}
-          {textureDots.map(d => (
-            <View key={d.key} style={{
-              position: "absolute",
-              width: 1.5, height: 1.5, borderRadius: 1,
-              backgroundColor: "rgba(0,0,0,0.06)",
-              top: d.top, left: d.left,
-            }} />
-          ))}
+          <Text style={s.coverMidiaKit}>Mídia kit</Text>
+          <Text style={s.coverName}>{data.name}</Text>
+          {ig && <Text style={s.coverHandle}>@{ig.username}</Text>}
 
-          {/* label topo esquerdo */}
-          <Text style={s.coverMkLabel}>MÍDIA KIT</Text>
-
-          {/* círculos concêntricos com opacidade decrescente */}
-          {circles.map(({ size, opacity }, i) => (
-            <View key={i} style={{
-              position: "absolute",
-              width: size, height: size,
-              borderRadius: size / 2,
-              border: `1.5px solid rgba(0,0,0,${opacity})`,
-              top: CY - size / 2,
-              left: CX - size / 2,
-            }} />
-          ))}
-
-          {/* círculo preto central — vazio */}
-          <View style={s.coverBtn} />
-
-          {/* texto bottom-left */}
-          <View style={s.coverBottom}>
-            <Text style={s.coverTitle}>MÍDIA KIT</Text>
-            <Text style={s.coverName}>{data.name}</Text>
-            {ig && <Text style={s.coverHandle}>@{ig.username}</Text>}
-          </View>
-
-          <Text style={[s.pageNum, { color: "rgba(0,0,0,0.3)" }]}>
+          <Text style={[s.pageNum, { color: "rgba(0,0,0,0.25)" }]}>
             01 / {totalSlides}
           </Text>
         </Page>
 
-        {/* ── SLIDE 2 — SOBRE ─────────────────────────────────────────────── */}
+        {/* ── SLIDE 2 — IDENTIDADE ────────────────────────────────────── */}
         <Page size="A4" orientation="landscape" style={s.page}>
           <View style={s.sobre}>
-            {/* sidebar esquerda */}
             <View style={s.sobreLeft}>
               {avatarSrc && <Image src={avatarSrc} style={s.sobreAvatar} />}
-
               {ig && (
                 <View style={s.sobreInfoRow}>
                   <Text style={s.sobreInfoLabel}>INSTAGRAM</Text>
@@ -418,20 +228,16 @@ export async function POST(req: NextRequest) {
               </View>
             </View>
 
-            {/* conteúdo direito */}
             <View style={s.sobreRight}>
-              <Text style={s.sobreSection}>SOBRE</Text>
+              <Text style={s.sobreSection}>IDENTIDADE</Text>
               <Text style={s.sobreName}>{data.name}</Text>
-              {data.niche ? (
-                <Text style={s.sobreBadge}>{data.niche}</Text>
-              ) : null}
+              {data.niche ? <Text style={s.sobreBadge}>{data.niche}</Text> : null}
               <Text style={s.sobreBio}>{data.aiDescription}</Text>
-
               {ig && (
                 <View style={s.sobreMetrics}>
                   <View>
                     <Text style={s.sobreMetricVal}>{formatNumber(ig.followers)}</Text>
-                    <Text style={s.sobreMetricLabel}>SEGUIDORES IG</Text>
+                    <Text style={s.sobreMetricLabel}>SEGUIDORES</Text>
                   </View>
                   <View>
                     <Text style={s.sobreMetricVal}>{formatNumber(ig.posts)}</Text>
@@ -439,9 +245,7 @@ export async function POST(req: NextRequest) {
                   </View>
                   {data.avgStoryViews > 0 && (
                     <View>
-                      <Text style={s.sobreMetricValNeon}>
-                        {formatNumber(data.avgStoryViews)}
-                      </Text>
+                      <Text style={s.sobreMetricValNeon}>{formatNumber(data.avgStoryViews)}</Text>
                       <Text style={s.sobreMetricLabel}>ALCANCE/STORY</Text>
                     </View>
                   )}
@@ -449,80 +253,110 @@ export async function POST(req: NextRequest) {
               )}
             </View>
           </View>
-
           <Text style={s.pageNum}>02 / {totalSlides}</Text>
         </Page>
 
-        {/* ── SLIDE 3 — NÚMEROS QUE IMPORTAM ──────────────────────────────── */}
+        {/* ── SLIDE 3 — NÚMEROS ───────────────────────────────────────── */}
         {ig && (
           <Page size="A4" orientation="landscape" style={s.page}>
             <View style={s.numeros}>
-              {/* header */}
-              <View style={s.numerosTop}>
-                <View>
-                  <Text style={s.numerosSection}>VISÃO GERAL</Text>
-                  <Text style={s.numerosTitle}>Números que importam</Text>
-                </View>
-                <Text style={s.numerosCreator}>{data.name}</Text>
+              <View style={s.numerosHeader}>
+                <Text style={s.numerosSection}>VISÃO GERAL</Text>
+                <Text style={s.numerosTitle}>Números que importam</Text>
+                <Text style={s.numerosCopy}>
+                  {`Mais de ${formatNumber(ig.followers)} pessoas acompanham ${data.name} no Instagram. Com uma comunidade fiel e engajada${data.niche ? ` no nicho de ${data.niche}` : ""}, cada publicação gera ${formatNumber(ig.avgLikes)} interações em média — provando que o alcance aqui é real e com impacto.`}
+                </Text>
               </View>
 
-              {/* cards */}
               <View style={s.numerosCards}>
                 <View style={s.numerosCard}>
-                  <Text style={s.numerosCardLabel}>TOTAL DE SEGUIDORES</Text>
+                  <Text style={s.numerosCardLabel}>SEGUIDORES</Text>
                   <Text style={s.numerosCardNum}>{formatNumber(ig.followers)}</Text>
                   <Text style={s.numerosCardSub}>Instagram</Text>
                 </View>
-
-                {data.avgReelsViews > 0 && (
-                  <View style={s.numerosCard}>
-                    <Text style={s.numerosCardLabel}>VIEWS MÉDIOS POR REEL</Text>
-                    <Text style={s.numerosCardNum}>{formatNumber(data.avgReelsViews)}</Text>
-                    <Text style={s.numerosCardSub}>Por publicação</Text>
-                  </View>
-                )}
-
-                {data.avgStoryViews > 0 && (
-                  <View style={s.numerosCard}>
-                    <Text style={s.numerosCardLabel}>ALCANCE POR STORY</Text>
-                    <Text style={s.numerosCardNumWhite}>
-                      {formatNumber(data.avgStoryViews)}
-                    </Text>
-                    <Text style={s.numerosCardSub}>Instagram Stories</Text>
-                  </View>
-                )}
-
+                <View style={s.numerosCard}>
+                  <Text style={s.numerosCardLabel}>ENGAJAMENTO</Text>
+                  <Text style={s.numerosCardNumWhite}>{formatPercent(ig.engagementRate)}</Text>
+                  <Text style={s.numerosCardSub}>Taxa média</Text>
+                </View>
                 <View style={s.numerosCard}>
                   <Text style={s.numerosCardLabel}>LIKES MÉDIOS</Text>
                   <Text style={s.numerosCardNum}>{formatNumber(ig.avgLikes)}</Text>
                   <Text style={s.numerosCardSub}>Por post</Text>
                 </View>
+                {data.avgReelsViews > 0 && (
+                  <View style={s.numerosCard}>
+                    <Text style={s.numerosCardLabel}>VIEWS/REEL</Text>
+                    <Text style={s.numerosCardNum}>{formatNumber(data.avgReelsViews)}</Text>
+                    <Text style={s.numerosCardSub}>Por publicação</Text>
+                  </View>
+                )}
+                {data.avgStoryViews > 0 && (
+                  <View style={s.numerosCard}>
+                    <Text style={s.numerosCardLabel}>ALCANCE/STORY</Text>
+                    <Text style={s.numerosCardNum}>{formatNumber(data.avgStoryViews)}</Text>
+                    <Text style={s.numerosCardSub}>Instagram Stories</Text>
+                  </View>
+                )}
               </View>
 
-              {/* summary bar */}
               <View style={s.numerosBar}>
                 <View>
                   <Text style={s.numerosBarTag}>INSTAGRAM</Text>
                   <Text style={s.numerosBarName}>
                     {formatNumber(ig.followers)} seguidores · {formatNumber(ig.posts)} posts
                   </Text>
-                  <Text style={s.numerosBarSub}>@{ig.username}</Text>
+                  <Text style={s.numerosBarSub}>@{ig.username}{ig.isVerified ? " ✓" : ""}</Text>
                 </View>
                 <View>
-                  <Text style={s.numerosBarEngLabel}>ENGAJAMENTO</Text>
+                  <Text style={s.numerosBarEngLabel}>ENGAJAMENTO MÉDIO</Text>
                   <Text style={s.numerosBarEngVal}>{formatPercent(ig.engagementRate)}</Text>
                 </View>
               </View>
             </View>
-
             <Text style={s.pageNum}>03 / {totalSlides}</Text>
           </Page>
         )}
 
-        {/* ── SLIDE 4 — CTA ────────────────────────────────────────────────── */}
+        {/* ── SLIDE 4 — POSTS RECENTES ────────────────────────────────── */}
+        {hasPosts && (
+          <Page size="A4" orientation="landscape" style={s.page}>
+            <View style={s.posts}>
+              <View style={s.postsHeader}>
+                <Text style={s.postsSection}>CONTEÚDO</Text>
+                <Text style={s.postsTitle}>Últimas publicações</Text>
+              </View>
+              <View style={s.postsGrid}>
+                {ig!.topPosts.slice(0, 3).map((post, i) => (
+                  <View key={i} style={s.postCard}>
+                    {postImages[i] ? (
+                      <Image src={postImages[i] as string} style={s.postThumb} />
+                    ) : (
+                      <View style={[s.postThumb, { backgroundColor: DIM }]} />
+                    )}
+                    <View style={s.postFooter}>
+                      <View style={s.postStat}>
+                        <View>
+                          <Text style={s.postStatLabel}>LIKES</Text>
+                          <Text style={s.postStatValNeon}>{formatNumber(post.likes)}</Text>
+                        </View>
+                        <View>
+                          <Text style={s.postStatLabel}>COMENTÁRIOS</Text>
+                          <Text style={s.postStatVal}>{formatNumber(post.comments)}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <Text style={s.pageNum}>04 / {totalSlides}</Text>
+          </Page>
+        )}
+
+        {/* ── SLIDE 5 — CTA ───────────────────────────────────────────── */}
         <Page size="A4" orientation="landscape" style={s.page}>
           <View style={s.ctaPage}>
-            {/* esquerda */}
             <View style={s.ctaLeft}>
               <Text style={s.ctaSection}>VAMOS TRABALHAR JUNTOS?</Text>
               <Text style={s.ctaTitle}>
@@ -532,7 +366,6 @@ export async function POST(req: NextRequest) {
               <Text style={s.ctaDesc}>
                 {data.name} está aberto a novas colaborações e parcerias comerciais.
               </Text>
-
               {ig && (
                 <View style={s.ctaCard}>
                   <View>
@@ -542,14 +375,12 @@ export async function POST(req: NextRequest) {
                   <Text style={s.ctaCardRight}>{formatNumber(ig.followers)} seguidores</Text>
                 </View>
               )}
-
               <View style={s.ctaCard}>
                 <View>
                   <Text style={s.ctaCardLabel}>CONTATO COMERCIAL</Text>
                   <Text style={s.ctaCardVal}>{contact}</Text>
                 </View>
               </View>
-
               {data.whatsapp ? (
                 <View style={s.ctaCard}>
                   <View>
@@ -560,26 +391,18 @@ export async function POST(req: NextRequest) {
               ) : null}
             </View>
 
-            {/* direita */}
             <View style={s.ctaRight}>
               {avatarSrc && <Image src={avatarSrc} style={s.ctaAvatar} />}
               <Text style={s.ctaReachLabel}>ALCANCE TOTAL</Text>
-              <Text style={s.ctaReachNum}>
-                {ig ? formatNumber(ig.followers) : "—"}
-              </Text>
+              <Text style={s.ctaReachNum}>{ig ? formatNumber(ig.followers) : "—"}</Text>
               <Text style={s.ctaReachSub}>Instagram</Text>
               <Text style={s.ctaName}>{data.name}</Text>
-              {data.city ? (
-                <Text style={s.ctaCity}>{data.city}</Text>
-              ) : null}
-              {data.niche ? (
-                <Text style={s.ctaBadge}>{data.niche}</Text>
-              ) : null}
+              {data.city ? <Text style={s.ctaCity}>{data.city}</Text> : null}
+              {data.niche ? <Text style={s.ctaBadge}>{data.niche}</Text> : null}
             </View>
           </View>
-
           <Text style={s.pageNum}>
-            {ig ? `04 / ${totalSlides}` : `03 / ${totalSlides - 1}`}
+            {hasPosts ? `05 / ${totalSlides}` : `04 / ${totalSlides}`}
           </Text>
         </Page>
       </Document>
