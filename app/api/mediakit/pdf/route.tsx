@@ -154,18 +154,26 @@ const s = StyleSheet.create({
   postsMetricNum: { fontSize: 30, fontFamily: "Helvetica-Bold", color: NEON, lineHeight: 1 },
   postsMetricNumWhite: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE, lineHeight: 1 },
 
-  // grid de posts
-  postsGrid: { flexDirection: "row", height: 420 },
-  postCard: { flex: 1, borderRight: `1px solid ${DIM}`, position: "relative", overflow: "hidden" },
-  postThumb: { width: "100%", height: 420, objectFit: "cover" },
-  postOverlay: {
-    position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: "rgba(0,0,0,0.70)",
-    padding: 14, flexDirection: "row", gap: 18,
+  // grid de posts — imagem quadrada + footer stats
+  postsGrid: { flexDirection: "row", flex: 1 },
+  postCard: {
+    flex: 1,
+    borderRight: `1px solid ${DIM}`,
+    flexDirection: "column",
   },
-  postStatLabel: { fontSize: 7, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 3 },
-  postStatVal: { fontSize: 16, fontFamily: "Helvetica-Bold", color: WHITE },
-  postStatValNeon: { fontSize: 16, fontFamily: "Helvetica-Bold", color: NEON },
+  // imagem quadrada: largura da coluna ≈ (842-196)/3 = 215pt
+  postThumb: { width: "100%", height: 215, objectFit: "cover" },
+  postFooter: {
+    flex: 1,
+    backgroundColor: CARD,
+    padding: 14,
+    flexDirection: "row",
+    gap: 20,
+    alignItems: "center",
+  },
+  postStatLabel: { fontSize: 7, color: GRAY, letterSpacing: 1, marginBottom: 4 },
+  postStatVal: { fontSize: 18, fontFamily: "Helvetica-Bold", color: WHITE },
+  postStatValNeon: { fontSize: 18, fontFamily: "Helvetica-Bold", color: NEON },
 
   // ── SLIDE 5 — CTA ────────────────────────────────────────────────────────────
   ctaPage: { flex: 1, flexDirection: "row" },
@@ -426,7 +434,7 @@ export async function POST(req: NextRequest) {
                         ) : (
                           <View style={[s.postThumb, { backgroundColor: DIM }]} />
                         )}
-                        <View style={s.postOverlay}>
+                        <View style={s.postFooter}>
                           <View>
                             <Text style={s.postStatLabel}>LIKES</Text>
                             <Text style={s.postStatValNeon}>{formatNumber(post.likes)}</Text>
