@@ -25,7 +25,7 @@ export default function MediaKitForm({ onSubmit }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email) return;
+    if (!form.name || !form.email || !form.instagram) return;
     onSubmit(form);
   }
 
@@ -96,10 +96,11 @@ export default function MediaKitForm({ onSubmit }: Props) {
               />
             </Field>
 
-            <Field label="@Instagram">
+            <Field label="@Instagram *">
               <div className="flex items-center bg-[#1f1f1f] border border-white/8 rounded-xl px-4 py-3 focus-within:border-[#C8FF00]/40 transition">
                 <span className="text-white/30 mr-1">@</span>
                 <input
+                  required
                   type="text"
                   placeholder="seuarroba"
                   value={form.instagram}

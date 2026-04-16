@@ -3,17 +3,15 @@ import type { InstagramProfile } from "@/types";
 export async function scrapeInstagram(username: string): Promise<InstagramProfile> {
   const cleanUsername = username.replace("@", "").trim();
 
-  const options = {
-    method: "GET",
-    headers: {
-      "x-rapidapi-key": process.env.RAPIDAPI_KEY!,
-      "x-rapidapi-host": process.env.RAPIDAPI_INSTAGRAM_HOST!,
-    },
-  };
-
   const res = await fetch(
-    `https://${process.env.RAPIDAPI_INSTAGRAM_HOST}/v1/info?username_or_id_or_url=${cleanUsername}`,
-    options
+    `https://instagram-public-bulk-scraper.p.rapidapi.com/v1/user_info_web?username=${cleanUsername}`,
+    {
+      method: "GET",
+      headers: {
+        "x-rapidapi-key": process.env.RAPIDAPI_KEY!,
+        "x-rapidapi-host": "instagram-public-bulk-scraper.p.rapidapi.com",
+      },
+    }
   );
 
   if (!res.ok) {
@@ -27,52 +25,48 @@ export async function scrapeInstagram(username: string): Promise<InstagramProfil
     throw new Error("Perfil não encontrado ou privado");
   }
 
-  const followers = data.follower_count ?? 0;
-  const mediaCount = data.media_count ?? 0;
+  const followers: number = data.edge_followed_by?.count ?? 0;
+  const following: number = data.edge_follow?.count ?? 0;
+  const totalPosts: number = data.edge_owner_to_timeline_media?.count ?? 0;
 
-  // Buscar posts recentes para calcular engajamento
-  const postsRes = await fetch(
-    `https://${process.env.RAPIDAPI_INSTAGRAM_HOST}/v1/posts?username_or_id_or_url=${cleanUsername}&limit=12`,
-    options
-  );
+  // Posts are embedded in the same response
+  const edges: any[] = data.edge_owner_to_timeline_media?.edges ?? [];
 
-  let topPosts: InstagramProfile["topPosts"] = [];
   let avgLikes = 0;
   let avgComments = 0;
+  let topPosts: InstagramProfile["topPosts"] = [];
 
-  if (postsRes.ok) {
-    const postsJson = await postsRes.json();
-    const posts = postsJson?.data?.items ?? [];
+  if (edges.length > 0) {
+    const totalLikes = edges.reduce(
+      (sum: number, e: any) => sum + (e.node?.edge_liked_by?.count ?? 0),
+      0
+    );
+    const totalComments = edges.reduce(
+      (sum: number, e: any) => sum + (e.node?.edge_media_to_comment?.count ?? 0),
+      0
+    );
+    avgLikes = Math.round(totalLikes / edges.length);
+    avgComments = Math.round(totalComments / edges.length);
 
-    if (posts.length > 0) {
-      const totalLikes = posts.reduce((sum: number, p: any) => sum + (p.like_count ?? 0), 0);
-      const totalComments = posts.reduce(
-        (sum: number, p: any) => sum + (p.comment_count ?? 0),
-        0
-      );
-      avgLikes = Math.round(totalLikes / posts.length);
-      avgComments = Math.round(totalComments / posts.length);
-
-      topPosts = posts.slice(0, 6).map((p: any) => ({
-        url: `https://www.instagram.com/p/${p.code}/`,
-        likes: p.like_count ?? 0,
-        comments: p.comment_count ?? 0,
-        thumbnail: p.thumbnail_url ?? p.image_versions?.items?.[0]?.url ?? "",
-      }));
-    }
+    topPosts = edges.slice(0, 6).map((e: any) => ({
+      url: `https://www.instagram.com/p/${e.node?.shortcode}/`,
+      likes: e.node?.edge_liked_by?.count ?? 0,
+      comments: e.node?.edge_media_to_comment?.count ?? 0,
+      thumbnail: e.node?.thumbnail_src ?? "",
+    }));
   }
 
   const engagementRate =
     followers > 0 ? ((avgLikes + avgComments) / followers) * 100 : 0;
 
   return {
-    username: cleanUsername,
+    username: data.username ?? cleanUsername,
     fullName: data.full_name ?? cleanUsername,
     bio: data.biography ?? "",
     followers,
-    following: data.following_count ?? 0,
-    posts: mediaCount,
-    profilePicUrl: data.profile_pic_url ?? "",
+    following,
+    posts: totalPosts,
+    profilePicUrl: data.profile_pic_url_hd ?? data.profile_pic_url ?? "",
     engagementRate: Math.round(engagementRate * 100) / 100,
     avgLikes,
     avgComments,

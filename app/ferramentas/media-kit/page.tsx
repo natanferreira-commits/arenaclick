@@ -28,13 +28,16 @@ export default function MediaKitPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!res.ok) throw new Error("Erro ao buscar dados");
-
       const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Erro ao buscar dados");
+      }
+
       setData(result);
       setStep("preview");
-    } catch {
-      alert("Erro ao gerar mídia kit. Verifique o @ do Instagram e tente novamente.");
+    } catch (err: any) {
+      alert(`Erro: ${err.message}`);
       setStep("form");
     }
   }
