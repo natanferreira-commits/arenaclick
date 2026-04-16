@@ -375,8 +375,8 @@ export async function POST(req: NextRequest) {
                       @{ig!.username}{ig!.isVerified ? " ✓" : ""}
                     </Text>
                     <Text style={s.postsSidebarName}>{data.name}</Text>
-                    <Text style={s.postsSidebarBio} numberOfLines={3}>
-                      {ig!.bio.replace(/\n/g, " ")}
+                    <Text style={s.postsSidebarBio}>
+                      {ig!.bio.replace(/\n/g, " ").slice(0, 120)}
                     </Text>
                     {contact && <Text style={s.postsSidebarLink}>{contact}</Text>}
                   </View>
