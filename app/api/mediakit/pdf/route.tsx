@@ -62,80 +62,67 @@ const s = StyleSheet.create({
     letterSpacing: 2,
   },
 
-  // ── SLIDE 1 — cover ───────────────────────────────────────────────────────
-  cover: { flex: 1, flexDirection: "row" },
+  // ── SLIDE 1 — cover (neon green + concentric circles) ────────────────────
+  coverPage: {
+    backgroundColor: NEON,
+    flex: 1,
+    position: "relative",
+  },
 
-  coverLeft: { flex: 55, padding: 48, justifyContent: "space-between" },
+  // label topo esquerdo
+  coverMkLabel: {
+    position: "absolute",
+    top: 26,
+    left: 40,
+    fontSize: 10,
+    color: "rgba(0,0,0,0.35)",
+    letterSpacing: 3,
+  },
 
-  coverAvatar: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    border: `2px solid ${DIM}`,
-    marginBottom: 22,
+  // texto bottom-left
+  coverBottom: {
+    position: "absolute",
+    bottom: 44,
+    left: 48,
+  },
+  coverTitle: {
+    fontSize: 13,
+    color: "rgba(0,0,0,0.45)",
+    letterSpacing: 2,
+    marginBottom: 6,
   },
   coverName: {
     fontSize: 52,
     fontFamily: "Helvetica-Bold",
-    color: WHITE,
+    color: "#0d0d0d",
     lineHeight: 1.05,
-    marginBottom: 8,
   },
-  coverHandle: { fontSize: 18, color: NEON, marginBottom: 14 },
-  coverBio: {
-    fontSize: 13,
-    color: GRAY,
-    lineHeight: 1.55,
-    maxWidth: 360,
-    marginBottom: 24,
-  },
-  coverTags: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  coverTag: {
-    borderRadius: 20,
-    border: `1px solid ${DIM}`,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    fontSize: 11,
-    color: GRAY,
-  },
-  coverTagNeon: {
-    borderRadius: 20,
-    border: `1px solid rgba(200,255,0,0.3)`,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    fontSize: 11,
-    color: NEON,
+  coverHandle: {
+    fontSize: 18,
+    color: "rgba(0,0,0,0.45)",
+    marginTop: 6,
   },
 
-  coverRight: {
-    flex: 45,
-    borderLeft: `1px solid ${DIM}`,
-    padding: 52,
+  // botão preto com asterisco
+  coverBtn: {
+    position: "absolute",
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#0d0d0d",
     justifyContent: "center",
     alignItems: "center",
+    // posicionado sobre o centro dos círculos
+    top: 218,
+    left: 626,
   },
-  coverBigNum: {
-    fontSize: 80,
-    fontFamily: "Helvetica-Bold",
+  coverBtnText: {
+    fontSize: 28,
     color: NEON,
-    lineHeight: 1,
+    fontFamily: "Helvetica-Bold",
   },
-  coverBigLabel: {
-    fontSize: 9,
-    color: GRAY,
-    letterSpacing: 2,
-    marginTop: 6,
-    marginBottom: 28,
-  },
-  coverDivider: { width: 40, height: 1, backgroundColor: DIM, marginBottom: 28 },
-  coverEngNum: { fontSize: 42, fontFamily: "Helvetica-Bold", color: WHITE },
-  coverEngLabel: {
-    fontSize: 9,
-    color: GRAY,
-    letterSpacing: 2,
-    marginTop: 6,
-    marginBottom: 28,
-  },
+
+  // label topo esquerdo (mantido pra compatibilidade)
   coverContactLabel: { fontSize: 9, color: GRAY, letterSpacing: 2, marginBottom: 5 },
   coverContactVal: { fontSize: 14, color: WHITE },
 
@@ -339,52 +326,43 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await renderToBuffer(
       <Document title={`Mídia Kit — ${data.name}`} author="Arena Click">
 
-        {/* ── SLIDE 1 — COVER ─────────────────────────────────────────────── */}
-        <Page size="A4" orientation="landscape" style={s.page}>
-          <Text style={s.mkLabel}>Mídia Kit</Text>
+        {/* ── SLIDE 1 — COVER (neon green + concentric circles) ──────────── */}
+        <Page size="A4" orientation="landscape" style={[s.page, s.coverPage]}>
 
-          <View style={s.cover}>
-            {/* left */}
-            <View style={s.coverLeft}>
-              <View>
-                {avatarSrc && <Image src={avatarSrc} style={s.coverAvatar} />}
-                <Text style={s.coverName}>{data.name}</Text>
-                {ig && <Text style={s.coverHandle}>@{ig.username}</Text>}
-                <Text style={s.coverBio}>{data.aiDescription}</Text>
-                <View style={s.coverTags}>
-                  {data.niche ? (
-                    <Text style={s.coverTagNeon}>{data.niche}</Text>
-                  ) : null}
-                  {data.city ? (
-                    <Text style={s.coverTag}>{data.city}</Text>
-                  ) : null}
-                  {ig ? (
-                    <Text style={s.coverTag}>
-                      Instagram · {formatNumber(ig.followers)}
-                    </Text>
-                  ) : null}
-                </View>
-              </View>
-            </View>
+          {/* label topo esquerdo */}
+          <Text style={s.coverMkLabel}>MÍDIA KIT</Text>
 
-            {/* right */}
-            <View style={s.coverRight}>
-              {ig && (
-                <>
-                  <Text style={s.coverBigNum}>{formatNumber(ig.followers)}</Text>
-                  <Text style={s.coverBigLabel}>TOTAL DE SEGUIDORES</Text>
-                  <View style={s.coverDivider} />
-                  <Text style={s.coverEngNum}>{formatPercent(ig.engagementRate)}</Text>
-                  <Text style={s.coverEngLabel}>ENGAJAMENTO MÉDIO</Text>
-                  <View style={s.coverDivider} />
-                </>
-              )}
-              <Text style={s.coverContactLabel}>CONTATO</Text>
-              <Text style={s.coverContactVal}>{contact}</Text>
-            </View>
+          {/* ── círculos concêntricos (centro: 658, 250) ── */}
+          {[500, 420, 340, 260, 180, 100].map((size, i) => (
+            <View
+              key={i}
+              style={{
+                position: "absolute",
+                width: size,
+                height: size,
+                borderRadius: size / 2,
+                border: "1.5px solid rgba(0,0,0,0.10)",
+                top: 250 - size / 2,
+                left: 658 - size / 2,
+              }}
+            />
+          ))}
+
+          {/* ── botão preto com asterisco ── */}
+          <View style={s.coverBtn}>
+            <Text style={s.coverBtnText}>*</Text>
           </View>
 
-          <Text style={s.pageNum}>01 / {totalSlides}</Text>
+          {/* ── texto bottom-left ── */}
+          <View style={s.coverBottom}>
+            <Text style={s.coverTitle}>MÍDIA KIT</Text>
+            <Text style={s.coverName}>{data.name}</Text>
+            {ig && <Text style={s.coverHandle}>@{ig.username}</Text>}
+          </View>
+
+          <Text style={[s.pageNum, { color: "rgba(0,0,0,0.3)" }]}>
+            01 / {totalSlides}
+          </Text>
         </Page>
 
         {/* ── SLIDE 2 — SOBRE ─────────────────────────────────────────────── */}
