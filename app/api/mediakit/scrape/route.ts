@@ -24,10 +24,11 @@ export async function POST(req: NextRequest) {
     try {
       const prompt = `Você é um copywriter especializado em mídia kits de criadores de conteúdo brasileiros.
 Escreva uma descrição profissional para o mídia kit abaixo. Deve ter 3 a 4 frases.
-Tom: confiante, direto, valorizado — como um grande creator que sabe o que vale.
+Tom: confiante, direto, valorizado. Como um grande creator que sabe o que vale.
 Use linguagem que convença marcas e anunciantes a fechar parceria.
 Destaque autoridade, consistência e conexão com a audiência.
 Em português brasileiro. Sem bullet points. Sem títulos. Só o texto corrido.
+IMPORTANTE: Não use travessão (—) em nenhuma parte do texto. Substitua por vírgula ou ponto.
 
 Nome: ${body.name}
 Nicho: ${body.niche || "conteúdo geral"}

@@ -114,18 +114,58 @@ const s = StyleSheet.create({
   numerosBarEngVal: { fontSize: 26, fontFamily: "Helvetica-Bold", color: NEON },
 
   // ── SLIDE 4 — POSTS ──────────────────────────────────────────────────────────
-  posts: { flex: 1, padding: 44 },
-  postsHeader: { marginBottom: 24 },
-  postsSection: { fontSize: 8, color: NEON, letterSpacing: 3, marginBottom: 8 },
-  postsTitle: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE },
-  postsGrid: { flexDirection: "row", gap: 12, flex: 1 },
-  postCard: { flex: 1, backgroundColor: CARD, borderRadius: 10, overflow: "hidden", border: `1px solid ${DIM}` },
-  postThumb: { width: "100%", height: 160 },
-  postFooter: { padding: 14 },
-  postStat: { flexDirection: "row", gap: 16 },
-  postStatLabel: { fontSize: 8, color: GRAY, letterSpacing: 1, marginBottom: 3 },
-  postStatVal: { fontSize: 16, fontFamily: "Helvetica-Bold", color: WHITE },
-  postStatValNeon: { fontSize: 16, fontFamily: "Helvetica-Bold", color: NEON },
+  postsPage: { flex: 1, flexDirection: "row" },
+
+  // sidebar esquerda
+  postsSidebar: {
+    width: 196,
+    backgroundColor: CARD,
+    padding: 20,
+    justifyContent: "space-between",
+  },
+  postsSidebarTop: {},
+  postsSidebarAvatar: { width: 52, height: 52, borderRadius: 26, marginBottom: 10 },
+  postsSidebarHandle: { fontSize: 12, fontFamily: "Helvetica-Bold", color: WHITE, marginBottom: 2 },
+  postsSidebarName: { fontSize: 10, color: GRAY, marginBottom: 8 },
+  postsSidebarBio: { fontSize: 9, color: "#888", lineHeight: 1.55, marginBottom: 8 },
+  postsSidebarLink: { fontSize: 9, color: NEON },
+  postsSidebarDivider: { height: 1, backgroundColor: DIM, marginVertical: 14 },
+  postsSidebarMetricLabel: { fontSize: 7, color: GRAY, letterSpacing: 2, marginBottom: 5 },
+  postsSidebarMetricVal: { fontSize: 26, fontFamily: "Helvetica-Bold", color: WHITE },
+  postsSidebarMetricValNeon: { fontSize: 26, fontFamily: "Helvetica-Bold", color: NEON },
+
+  // área direita
+  postsRight: { flex: 1, flexDirection: "column" },
+
+  // top row: 3 metric cards
+  postsMetricRow: {
+    flexDirection: "row",
+    height: 88,
+    borderBottom: `1px solid ${DIM}`,
+  },
+  postsMetricCard: {
+    flex: 1,
+    backgroundColor: CARD,
+    borderRight: `1px solid ${DIM}`,
+    padding: 18,
+    justifyContent: "flex-end",
+  },
+  postsMetricLabel: { fontSize: 8, color: GRAY, letterSpacing: 2, marginBottom: 8 },
+  postsMetricNum: { fontSize: 30, fontFamily: "Helvetica-Bold", color: NEON, lineHeight: 1 },
+  postsMetricNumWhite: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE, lineHeight: 1 },
+
+  // grid de posts
+  postsGrid: { flex: 1, flexDirection: "row" },
+  postCard: { flex: 1, borderRight: `1px solid ${DIM}`, position: "relative", overflow: "hidden" },
+  postThumb: { width: "100%", height: "100%" },
+  postOverlay: {
+    position: "absolute", bottom: 0, left: 0, right: 0,
+    backgroundColor: "rgba(0,0,0,0.65)",
+    padding: 12, flexDirection: "row", gap: 14,
+  },
+  postStatLabel: { fontSize: 7, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 },
+  postStatVal: { fontSize: 14, fontFamily: "Helvetica-Bold", color: WHITE },
+  postStatValNeon: { fontSize: 14, fontFamily: "Helvetica-Bold", color: NEON },
 
   // ── SLIDE 5 — CTA ────────────────────────────────────────────────────────────
   ctaPage: { flex: 1, flexDirection: "row" },
@@ -264,7 +304,7 @@ export async function POST(req: NextRequest) {
                 <Text style={s.numerosSection}>VISÃO GERAL</Text>
                 <Text style={s.numerosTitle}>Números que importam</Text>
                 <Text style={s.numerosCopy}>
-                  {`Mais de ${formatNumber(ig.followers)} pessoas acompanham ${data.name} no Instagram. Com uma comunidade fiel e engajada${data.niche ? ` no nicho de ${data.niche}` : ""}, cada publicação gera ${formatNumber(ig.avgLikes)} interações em média — provando que o alcance aqui é real e com impacto.`}
+                  {`Mais de ${formatNumber(ig.followers)} pessoas acompanham ${data.name} no Instagram. Com uma comunidade fiel e engajada${data.niche ? ` no nicho de ${data.niche}` : ""}, cada publicação gera ${formatNumber(ig.avgLikes)} interações em média. O alcance aqui é real e com impacto.`}
                 </Text>
               </View>
 
@@ -319,40 +359,93 @@ export async function POST(req: NextRequest) {
         )}
 
         {/* ── SLIDE 4 — POSTS RECENTES ────────────────────────────────── */}
-        {hasPosts && (
-          <Page size="A4" orientation="landscape" style={s.page}>
-            <View style={s.posts}>
-              <View style={s.postsHeader}>
-                <Text style={s.postsSection}>CONTEÚDO</Text>
-                <Text style={s.postsTitle}>Últimas publicações</Text>
-              </View>
-              <View style={s.postsGrid}>
-                {ig!.topPosts.slice(0, 3).map((post, i) => (
-                  <View key={i} style={s.postCard}>
-                    {postImages[i] ? (
-                      <Image src={postImages[i] as string} style={s.postThumb} />
-                    ) : (
-                      <View style={[s.postThumb, { backgroundColor: DIM }]} />
+        {hasPosts && (() => {
+          const ratioInfluencia = ig!.following > 0
+            ? Math.round(ig!.followers / ig!.following)
+            : Math.round(ig!.avgLikes > 0 ? ig!.followers / ig!.avgLikes : 0);
+          return (
+            <Page size="A4" orientation="landscape" style={s.page}>
+              <View style={s.postsPage}>
+
+                {/* sidebar esquerda */}
+                <View style={s.postsSidebar}>
+                  <View style={s.postsSidebarTop}>
+                    {avatarSrc && <Image src={avatarSrc} style={s.postsSidebarAvatar} />}
+                    <Text style={s.postsSidebarHandle}>
+                      @{ig!.username}{ig!.isVerified ? " ✓" : ""}
+                    </Text>
+                    <Text style={s.postsSidebarName}>{data.name}</Text>
+                    <Text style={s.postsSidebarBio} numberOfLines={3}>
+                      {ig!.bio.replace(/\n/g, " ")}
+                    </Text>
+                    {contact && <Text style={s.postsSidebarLink}>{contact}</Text>}
+                  </View>
+
+                  <View>
+                    <View style={s.postsSidebarDivider} />
+                    <Text style={s.postsSidebarMetricLabel}>RATIO INFLUENCIA</Text>
+                    <Text style={s.postsSidebarMetricVal}>{ratioInfluencia}x</Text>
+
+                    {data.avgReelsViews > 0 && (
+                      <>
+                        <View style={s.postsSidebarDivider} />
+                        <Text style={s.postsSidebarMetricLabel}>VIEWS MEDIOS</Text>
+                        <Text style={s.postsSidebarMetricValNeon}>
+                          {formatNumber(data.avgReelsViews)}
+                        </Text>
+                      </>
                     )}
-                    <View style={s.postFooter}>
-                      <View style={s.postStat}>
-                        <View>
-                          <Text style={s.postStatLabel}>LIKES</Text>
-                          <Text style={s.postStatValNeon}>{formatNumber(post.likes)}</Text>
-                        </View>
-                        <View>
-                          <Text style={s.postStatLabel}>COMENTÁRIOS</Text>
-                          <Text style={s.postStatVal}>{formatNumber(post.comments)}</Text>
-                        </View>
-                      </View>
+                  </View>
+                </View>
+
+                {/* área direita */}
+                <View style={s.postsRight}>
+
+                  {/* top: 3 métricas */}
+                  <View style={s.postsMetricRow}>
+                    <View style={s.postsMetricCard}>
+                      <Text style={s.postsMetricLabel}>SEGUIDORES</Text>
+                      <Text style={s.postsMetricNum}>{formatNumber(ig!.followers)}</Text>
+                    </View>
+                    <View style={s.postsMetricCard}>
+                      <Text style={s.postsMetricLabel}>ENGAJAMENTO</Text>
+                      <Text style={s.postsMetricNumWhite}>{formatPercent(ig!.engagementRate)}</Text>
+                    </View>
+                    <View style={[s.postsMetricCard, { borderRight: "none" }]}>
+                      <Text style={s.postsMetricLabel}>LIKES MEDIOS</Text>
+                      <Text style={s.postsMetricNum}>{formatNumber(ig!.avgLikes)}</Text>
                     </View>
                   </View>
-                ))}
+
+                  {/* grid de posts */}
+                  <View style={s.postsGrid}>
+                    {ig!.topPosts.slice(0, 3).map((post, i) => (
+                      <View key={i} style={[s.postCard, i === 2 ? { borderRight: "none" } : {}]}>
+                        {postImages[i] ? (
+                          <Image src={postImages[i] as string} style={s.postThumb} />
+                        ) : (
+                          <View style={[s.postThumb, { backgroundColor: DIM }]} />
+                        )}
+                        <View style={s.postOverlay}>
+                          <View>
+                            <Text style={s.postStatLabel}>LIKES</Text>
+                            <Text style={s.postStatValNeon}>{formatNumber(post.likes)}</Text>
+                          </View>
+                          <View>
+                            <Text style={s.postStatLabel}>COMENTARIOS</Text>
+                            <Text style={s.postStatVal}>{formatNumber(post.comments)}</Text>
+                          </View>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+
+                </View>
               </View>
-            </View>
-            <Text style={s.pageNum}>04 / {totalSlides}</Text>
-          </Page>
-        )}
+              <Text style={s.pageNum}>04 / {totalSlides}</Text>
+            </Page>
+          );
+        })()}
 
         {/* ── SLIDE 5 — CTA ───────────────────────────────────────────── */}
         <Page size="A4" orientation="landscape" style={s.page}>
@@ -394,7 +487,7 @@ export async function POST(req: NextRequest) {
             <View style={s.ctaRight}>
               {avatarSrc && <Image src={avatarSrc} style={s.ctaAvatar} />}
               <Text style={s.ctaReachLabel}>ALCANCE TOTAL</Text>
-              <Text style={s.ctaReachNum}>{ig ? formatNumber(ig.followers) : "—"}</Text>
+              <Text style={s.ctaReachNum}>{ig ? formatNumber(ig.followers) : "0"}</Text>
               <Text style={s.ctaReachSub}>Instagram</Text>
               <Text style={s.ctaName}>{data.name}</Text>
               {data.city ? <Text style={s.ctaCity}>{data.city}</Text> : null}
