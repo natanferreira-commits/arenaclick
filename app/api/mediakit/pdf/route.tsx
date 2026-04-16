@@ -155,17 +155,17 @@ const s = StyleSheet.create({
   postsMetricNumWhite: { fontSize: 30, fontFamily: "Helvetica-Bold", color: WHITE, lineHeight: 1 },
 
   // grid de posts
-  postsGrid: { flex: 1, flexDirection: "row" },
+  postsGrid: { flexDirection: "row", height: 420 },
   postCard: { flex: 1, borderRight: `1px solid ${DIM}`, position: "relative", overflow: "hidden" },
-  postThumb: { width: "100%", height: "100%" },
+  postThumb: { width: "100%", height: 420, objectFit: "cover" },
   postOverlay: {
     position: "absolute", bottom: 0, left: 0, right: 0,
-    backgroundColor: "rgba(0,0,0,0.65)",
-    padding: 12, flexDirection: "row", gap: 14,
+    backgroundColor: "rgba(0,0,0,0.70)",
+    padding: 14, flexDirection: "row", gap: 18,
   },
-  postStatLabel: { fontSize: 7, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 },
-  postStatVal: { fontSize: 14, fontFamily: "Helvetica-Bold", color: WHITE },
-  postStatValNeon: { fontSize: 14, fontFamily: "Helvetica-Bold", color: NEON },
+  postStatLabel: { fontSize: 7, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 3 },
+  postStatVal: { fontSize: 16, fontFamily: "Helvetica-Bold", color: WHITE },
+  postStatValNeon: { fontSize: 16, fontFamily: "Helvetica-Bold", color: NEON },
 
   // ── SLIDE 5 — CTA ────────────────────────────────────────────────────────────
   ctaPage: { flex: 1, flexDirection: "row" },
