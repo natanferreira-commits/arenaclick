@@ -103,23 +103,16 @@ const s = StyleSheet.create({
     marginTop: 6,
   },
 
-  // botão preto com asterisco
+  // círculo preto central — vazio
   coverBtn: {
     position: "absolute",
     width: 64,
     height: 64,
     borderRadius: 32,
     backgroundColor: "#0d0d0d",
-    justifyContent: "center",
-    alignItems: "center",
-    // posicionado sobre o centro dos círculos
-    top: 218,
-    left: 626,
-  },
-  coverBtnText: {
-    fontSize: 28,
-    color: NEON,
-    fontFamily: "Helvetica-Bold",
+    // centro dos círculos: top=280, left=620 → offset 32
+    top: 248,
+    left: 588,
   },
 
   // label topo esquerdo (mantido pra compatibilidade)
@@ -323,37 +316,72 @@ export async function POST(req: NextRequest) {
     const contact = data.contactEmail || data.email;
     const totalSlides = 4;
 
+    // textura — grid de pontinhos pré-computado
+    const textureDots: { key: string; top: number; left: number }[] = [];
+    for (let row = 0; row < 18; row++) {
+      for (let col = 0; col < 28; col++) {
+        textureDots.push({ key: `${row}-${col}`, top: row * 33 + 12, left: col * 30 + 12 });
+      }
+    }
+
+    // círculos com opacidade decrescente do centro pra fora
+    const circles = [
+      { size: 80,  opacity: 0.60 },
+      { size: 160, opacity: 0.45 },
+      { size: 260, opacity: 0.30 },
+      { size: 360, opacity: 0.18 },
+      { size: 460, opacity: 0.10 },
+      { size: 560, opacity: 0.05 },
+    ];
+    const CX = 620; // centro X dos círculos
+    const CY = 280; // centro Y dos círculos
+
     const pdfBuffer = await renderToBuffer(
       <Document title={`Mídia Kit — ${data.name}`} author="Arena Click">
 
-        {/* ── SLIDE 1 — COVER (neon green + concentric circles) ──────────── */}
+        {/* ── SLIDE 1 — COVER ─────────────────────────────────────────────── */}
         <Page size="A4" orientation="landscape" style={[s.page, s.coverPage]}>
+
+          {/* degradê sutil — overlay escuro na borda inferior */}
+          <View style={{
+            position: "absolute", bottom: 0, left: 0, right: 0, height: 320,
+            backgroundColor: "#88aa00", opacity: 0.18,
+          }} />
+          {/* degradê sutil — canto superior direito um pouco mais claro */}
+          <View style={{
+            position: "absolute", top: 0, right: 0, width: 400, height: 280,
+            backgroundColor: "#ffffff", opacity: 0.06,
+          }} />
+
+          {/* textura — grid de pontinhos */}
+          {textureDots.map(d => (
+            <View key={d.key} style={{
+              position: "absolute",
+              width: 1.5, height: 1.5, borderRadius: 1,
+              backgroundColor: "rgba(0,0,0,0.06)",
+              top: d.top, left: d.left,
+            }} />
+          ))}
 
           {/* label topo esquerdo */}
           <Text style={s.coverMkLabel}>MÍDIA KIT</Text>
 
-          {/* ── círculos concêntricos (centro: 658, 250) ── */}
-          {[500, 420, 340, 260, 180, 100].map((size, i) => (
-            <View
-              key={i}
-              style={{
-                position: "absolute",
-                width: size,
-                height: size,
-                borderRadius: size / 2,
-                border: "1.5px solid rgba(0,0,0,0.10)",
-                top: 250 - size / 2,
-                left: 658 - size / 2,
-              }}
-            />
+          {/* círculos concêntricos com opacidade decrescente */}
+          {circles.map(({ size, opacity }, i) => (
+            <View key={i} style={{
+              position: "absolute",
+              width: size, height: size,
+              borderRadius: size / 2,
+              border: `1.5px solid rgba(0,0,0,${opacity})`,
+              top: CY - size / 2,
+              left: CX - size / 2,
+            }} />
           ))}
 
-          {/* ── botão preto com asterisco ── */}
-          <View style={s.coverBtn}>
-            <Text style={s.coverBtnText}>*</Text>
-          </View>
+          {/* círculo preto central — vazio */}
+          <View style={s.coverBtn} />
 
-          {/* ── texto bottom-left ── */}
+          {/* texto bottom-left */}
           <View style={s.coverBottom}>
             <Text style={s.coverTitle}>MÍDIA KIT</Text>
             <Text style={s.coverName}>{data.name}</Text>
